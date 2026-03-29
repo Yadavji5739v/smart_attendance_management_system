@@ -1,3 +1,4 @@
+const API = import.meta.env.VITE_API_URL || "";
 // src/components/Login.jsx
 import { useState } from "react";
 import axios from "axios";
