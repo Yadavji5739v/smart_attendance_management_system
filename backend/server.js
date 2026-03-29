@@ -8,7 +8,10 @@ const app = express();
 
 // Middleware
 app.use(helmet());
-app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:5173' }));
+app.use(cors({
+  origin: "https://smart-attendance-management-system-8vuhiy9te.vercel.app",
+  credentials: true
+}));
 app.use(express.json());
 
 // Routes
