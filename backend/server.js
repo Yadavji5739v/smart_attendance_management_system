@@ -40,6 +40,7 @@ app.get('/api/test-db', async (req, res) => {
 /* =========================
    📦 ROUTES
 ========================= */
+app.options('*', cors());
 app.use('/api/auth',       require('./routes/auth'));
 app.use('/api/qr',         require('./routes/qr'));
 app.use('/api/attendance', require('./routes/attendance'));
