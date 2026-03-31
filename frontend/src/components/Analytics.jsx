@@ -1,3 +1,4 @@
+const BACKEND = import.meta.env.VITE_API_URL || '';
 import { useEffect, useState } from "react";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
@@ -22,10 +23,10 @@ export default function Analytics() {
   useEffect(() => {
     const h = { headers: H() };
     Promise.all([
-      axios.get("/api/analytics/student-summary", h),
-      axios.get("/api/analytics/defaulters?threshold=75", h),
-      axios.get("/api/analytics/branch", h),
-      axios.get("/api/analytics/branches", h),
+      axios.get(`${BACKEND}/api/analytics/student-summary`, h),
+      axios.get(`${BACKEND}/api/analytics/defaulters?threshold=75`, h),
+      axios.get(`${BACKEND}/api/analytics/branch`, h),
+      axios.get(`${BACKEND}/api/analytics/branches`, h),
     ]).then(([s, d, b, br]) => {
       setSummary(s.data);
       setDefaulters(d.data);
