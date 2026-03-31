@@ -14,6 +14,19 @@ const app = express();
 /* =========================
    🔐 MIDDLEWARE
 ========================= */
+// Manual CORS headers first (ensures OPTIONS/preflight always has the right headers,
+// even behind some hosting/proxy setups).
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  res.setHeader('Access-Control-Allow-Origin', origin || '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Max-Age', '86400');
+
+  if (req.method === 'OPTIONS') return res.sendStatus(204);
+  return next();
+});
+
 app.use(helmet());
 
 // ✅ Allow both local + deployed frontend
