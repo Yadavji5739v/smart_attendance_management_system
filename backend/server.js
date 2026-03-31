@@ -19,6 +19,7 @@ app.use(helmet());
 // ✅ Allow both local + deployed frontend
 app.use(cors({
   origin: true,   // ✅ allow ALL origins (temporary fix)
+   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
 
