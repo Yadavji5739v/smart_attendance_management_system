@@ -1,4 +1,4 @@
-const API = import.meta.env.VITE_API_URL;
+const BACKEND = import.meta.env.VITE_API_URL || '';
 import { useState } from "react";
 import axios from "axios";
 
@@ -12,7 +12,7 @@ export default function Login() {
     setLoading(true);
     setError("");
     try {
-      const { data } = await axios.post("/api/auth/login", form);
+      const { data } = await axios.post(`${BACKEND}/api/auth/login`, form);
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
       // Redirect based on role
