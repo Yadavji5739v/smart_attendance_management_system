@@ -17,11 +17,15 @@ const app = express();
 app.use(helmet());
 
 // ✅ Allow both local + deployed frontend
-app.use(cors({
-  origin: true,   // ✅ allow ALL origins (temporary fix)
-   methods: ["GET", "POST", "PUT", "DELETE"],
-  credentials: true
-}));
+// ✅ CORS (needed for Vercel frontend -> Backend API calls)
+const corsOptions = {
+  origin: true, // reflect request origin
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  // JWT is stored in localStorage (no cookies), so don't enable credentials.
+  credentials: false,
+  allowedHeaders: ["Content-Type", "Authorization"]
+};
+app.use(cors(corsOptions));
 
 app.use(express.json());
 
@@ -40,7 +44,7 @@ app.get('/api/test-db', async (req, res) => {
 /* =========================
    📦 ROUTES
 ========================= */
-app.options('*', cors());
+app.options('*', cors(corsOptions));
 app.use('/api/auth',       require('./routes/auth'));
 app.use('/api/qr',         require('./routes/qr'));
 app.use('/api/attendance', require('./routes/attendance'));
