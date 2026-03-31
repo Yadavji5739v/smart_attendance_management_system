@@ -1,4 +1,4 @@
-// src/components/QRGenerator.jsx  — Faculty Dashboard
+const BACKEND = import.meta.env.VITE_API_URL || '';
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import Navbar from "./Navbar";
@@ -19,7 +19,7 @@ export default function QRGenerator() {
 
   // Load subjects assigned to this faculty
   useEffect(() => {
-    axios.get("/api/attendance/subjects", { headers: headers() })
+    axios.get(`${BACKEND}/api/attendance/subjects`, { headers: headers() })
       .then(r => setSubjects(r.data))
       .catch(() => {
         // fallback mock if endpoint not yet built
