@@ -1,4 +1,4 @@
-// src/components/QRScanner.jsx  — Student Dashboard
+const BACKEND = import.meta.env.VITE_API_URL || '';
 import { useEffect, useRef, useState } from "react";
 import { Html5QrcodeScanner } from "html5-qrcode";
 import axios from "axios";
@@ -14,7 +14,7 @@ export default function QRScanner() {
 
   // Load student's own attendance summary
   useEffect(() => {
-    axios.get("/api/analytics/student-summary", { headers: headers() })
+    axios.get(`${BACKEND}/api/analytics/student-summary`, { headers: headers() })
       .then(r => setSummary(r.data))
       .catch(console.error);
   }, []);
