@@ -7,11 +7,11 @@ exports.login = async (req, res) => {
     const password = req.body.password?.trim();
 
     try {
-        const [rows] = await db.query(
-            'SELECT * FROM users WHERE email = ?', [email]
+        const result = await db.query(
+            'SELECT * FROM users WHERE email = $1', [email]
         );
 
-        if (rows.length === 0)
+        if (result.rows.length === 0)
             return res.status(401).json({ message: 'Invalid email or password' });
 
         const user = rows[0];
@@ -38,7 +38,6 @@ exports.login = async (req, res) => {
                 semester:  user.semester
             }
         });
-
     } catch (err) {
         console.error('LOGIN ERROR:', err.message);
         res.status(500).json({ message: 'Server error', error: err.message });
@@ -51,24 +50,22 @@ exports.register = async (req, res) => {
         const hash = await bcrypt.hash(password, 12);
         await db.query(
             `INSERT INTO users (name, email, password, role, branch_id, semester)
-             VALUES (?, ?, ?, ?, ?, ?)`,
+             VALUES ($1, $2, $3, $4, $5, $6)`,
             [name, email, hash, role, branch_id, semester]
         );
         res.status(201).json({ message: 'User registered successfully' });
     } catch (err) {
-        if (err.code === 'ER_DUP_ENTRY')
-            return res.status(400).json({ message: 'Email already exists' });
         res.status(500).json({ message: 'Server error', error: err.message });
     }
 };
 
 exports.getProfile = async (req, res) => {
     try {
-        const [rows] = await db.query(
-            'SELECT user_id, name, email, role, branch_id, semester FROM users WHERE user_id = ?',
+        const result = await db.query(
+            'SELECT user_id, name, email, role, branch_id, semester FROM users WHERE user_id = $1',
             [req.user.user_id]
         );
-        res.json(rows[0]);
+        res.json(result.rows[0]);
     } catch (err) {
         res.status(500).json({ message: 'Server error' });
     }
