@@ -125,11 +125,11 @@ exports.monthlyTrend = async (req, res) => {
 
 Go to Render → Your backend service → **Environment** and update:
 ```
-DB_HOST=db.xxxxxxxxxxxx.supabase.co
+DB_HOST=db.uyrkpbnxiwkjpcpubhlt.supabase.co
 DB_PORT=5432
 DB_NAME=postgres
 DB_USER=postgres
-DB_PASSWORD=Bfcet@2024
+DB_PASSWORD=SEzetGnjzDRQMD5y
 JWT_SECRET=SmartAttendance@BFCET#2024$SecureKey
 JWT_EXPIRES_IN=7d
 QR_EXPIRY_MINUTES=5
