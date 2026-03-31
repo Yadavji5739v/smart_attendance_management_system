@@ -18,12 +18,11 @@ app.use(helmet());
 
 // ✅ Allow both local + deployed frontend
 app.use(cors({
-  // origin: [
-  //   "http://localhost:3000", // local frontend
-  //   "https://smart-attendance-management-system-8vuhiy9te.vercel.app"
-  // ],
-  origin :'*',
-  credentials: false
+  origin: [
+    "http://localhost:3000", // local frontend
+    "https://smart-attendance-management-system-8vuhiy9te.vercel.app"
+  ],
+  credentials: true
 }));
 
 app.use(express.json());
