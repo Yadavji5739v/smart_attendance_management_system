@@ -47,8 +47,8 @@ app.use(express.json());
 ========================= */
 app.get('/api/test-db', async (req, res) => {
   try {
-    const [rows] = await db.query("SELECT 1");
-    res.json({ success: true, message: "✅ DB Connected" });
+    const result = await db.query("SELECT 1");
+    res.json({ success: true, message: "✅ DB Connected", rows: result.rows });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }

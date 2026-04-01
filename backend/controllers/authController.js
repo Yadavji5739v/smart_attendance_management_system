@@ -14,7 +14,7 @@ exports.login = async (req, res) => {
         if (result.rows.length === 0)
             return res.status(401).json({ message: 'Invalid email or password' });
 
-        const user = rows[0];
+        const user = result.rows[0];
         const storedPassword = user.password || user.password_hash;
         const isMatch = await bcrypt.compare(password, storedPassword);
 
