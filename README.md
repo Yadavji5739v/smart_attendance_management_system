@@ -53,12 +53,10 @@ smart-attendance/
 Download MySQL 8.0 from https://dev.mysql.com/downloads/
 Remember your root password.
 
-### Step 2 — Create the Database
-Open MySQL command line or MySQL Workbench and run:
-```sql
-source /path/to/smart-attendance/database/schema.sql
-```
-Or paste the contents of schema.sql directly.
+### Step 2 — Create the Database (Supabase/Postgres)
+1. Go to Supabase Dashboard > SQL Editor.
+2. Paste/run `database/schema_postgres.sql`.
+3. Get DATABASE_URL from Settings > Database.
 
 ### Step 3 — Setup Backend
 ```bash
@@ -104,9 +102,9 @@ Go to: **http://localhost:5173**
 
 | Role    | Email                  | Password   |
 |---------|------------------------|------------|
-| Admin   | admin@college.edu      | admin123   |
-| Faculty | rahul@college.edu      | faculty123 |
-| Student | cs21001@college.edu    | student123 |
+| Admin   | admin@college.edu      | **abc** |
+| Faculty | rahul@college.edu      | **abc** |
+| Student | cs21001@college.edu    | **abc** |
 
 > ⚠️ Update schema.sql with proper bcrypt-hashed passwords before demo.
 > Use this site to generate: https://bcrypt-generator.com/ (12 rounds)
@@ -162,8 +160,8 @@ react, react-dom, react-router-dom, axios, recharts, html5-qrcode, vite
 
 ## ❓ Common Issues
 
-**"ER_ACCESS_DENIED" on backend start**
-→ Wrong DB_PASSWORD in .env file
+**"DB connection error" on backend start**
+→ Wrong DATABASE_URL or DB_* in .env (use Supabase creds)
 
 **"Cannot GET /api/..."**
 → Backend not running. Run `npm run dev` in backend folder.
