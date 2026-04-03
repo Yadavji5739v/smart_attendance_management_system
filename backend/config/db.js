@@ -1,29 +1,24 @@
-// config/db.js - PostgreSQL connection for Supabase
+// config/db.js - FINAL Supabase PostgreSQL Connection
+
 const { Pool } = require('pg');
 require('dotenv').config();
 
-// Prefer Supabase's single connection string if provided.
-// Local `.env` may only contain `DATABASE_URL`, while deployments may set `DB_HOST/DB_USER/...`.
-const ssl = { rejectUnauthorized: false }; // Required for Supabase (and sometimes local tunnels)
+// Create connection pool using Supabase DATABASE_URL
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false // required for Supabase
+  }
+});
 
-const pool = process.env.DATABASE_URL
-    ? new Pool({ connectionString: process.env.DATABASE_URL, ssl })
-    : new Pool({
-        host:     process.env.DB_HOST,
-        port:     process.env.DB_PORT || 5432,
-        database: process.env.DB_NAME,
-        user:     process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
-        ssl
-    });
-
+// Test connection
 pool.connect()
-    .then(() => console.log('✅ Supabase PostgreSQL connected'))
-    .catch(err => console.error('❌ DB Error:', err.message));
+  .then(() => console.log('✅ Supabase PostgreSQL connected'))
+  .catch(err => console.error('❌ DB Error:', err.message));
 
-// Make it work like mysql2 (same query syntax)
+// Export query function (compatible with your existing code)
 const db = {
-    query: (text, params) => pool.query(text, params)
+  query: (text, params) => pool.query(text, params)
 };
 
 module.exports = db;
