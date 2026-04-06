@@ -60,8 +60,8 @@ app.get('/api/test-db', async (req, res) => {
 app.options('*', cors(corsOptions));
 app.use('/api/auth',       require('./routes/auth'));
 app.use('/api/qr',         require('./routes/qr'));
-app.use('/api/attendance', require('./routes/attendance'));
-app.use('/api/analytics',  require('./routes/analytics'));
+
+app.use('/api/analytics
 
 /* =========================
    ❤️ API HEALTH
