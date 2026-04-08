@@ -1,48 +1,80 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import Login      from './components/Login'
-import QRGenerator from './components/QRGenerator'
-import QRScanner  from './components/QRScanner'
-import Analytics  from './components/Analytics'
+import React, { useContext } from 'react';
+import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
+import { AuthContext } from './context/AuthContext';
+import Sidebar from './components/Sidebar';
 
-// Guard: redirect to login if not logged in
-function Protected({ children, allowedRoles }) {
-  const user = JSON.parse(localStorage.getItem('user') || 'null')
-  if (!user) return <Navigate to="/" replace />
-  if (allowedRoles && !allowedRoles.includes(user.role))
-    return <Navigate to="/" replace />
-  return children
-}
+// Pages
+import Login from './pages/Login';
 
-export default function App() {
+// Admin Pages
+import AdminDashboard from './pages/admin/Dashboard';
+import AdminUsers from './pages/admin/Users';
+import AdminBranches from './pages/admin/Branches';
+import AdminSubjects from './pages/admin/Subjects';
+
+// Faculty Pages
+import FacultyDashboard from './pages/faculty/Dashboard';
+import FacultyReports from './pages/faculty/Reports';
+
+// Student Pages
+import StudentDashboard from './pages/student/Dashboard';
+import StudentScan from './pages/student/Scan';
+
+const ProtectedRoute = ({ allowedRoles }) => {
+  const { user, loading } = useContext(AuthContext);
+
+  if (loading) return <div>Loading...</div>;
+  if (!user) return <Navigate to="/" replace />;
+  if (allowedRoles && !allowedRoles.includes(user.role)) {
+    return <Navigate to={`/${user.role}`} replace />;
+  }
+
+  return (
+    <div className="app-container animate-fade-in">
+      <Sidebar />
+      <main className="main-content">
+        <Outlet />
+      </main>
+    </div>
+  );
+};
+
+const App = () => {
+  const { user } = useContext(AuthContext);
+
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/"         element={<Login />} />
+        <Route 
+          path="/" 
+          element={user ? <Navigate to={`/${user.role}`} /> : <Login />} 
+        />
 
-        {/* Faculty routes */}
-        <Route path="/faculty"  element={
-          <Protected allowedRoles={['faculty', 'admin']}>
-            <QRGenerator />
-          </Protected>
-        } />
+        {/* Admin Routes */}
+        <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/users" element={<AdminUsers />} />
+          <Route path="/admin/branches" element={<AdminBranches />} />
+          <Route path="/admin/subjects" element={<AdminSubjects />} />
+        </Route>
 
-        {/* Student routes */}
-        <Route path="/student"  element={
-          <Protected allowedRoles={['student']}>
-            <QRScanner />
-          </Protected>
-        } />
+        {/* Faculty Routes */}
+        <Route element={<ProtectedRoute allowedRoles={['faculty']} />}>
+          <Route path="/faculty" element={<FacultyDashboard />} />
+          <Route path="/faculty/reports" element={<FacultyReports />} />
+        </Route>
 
-        {/* Analytics - all roles */}
-        <Route path="/analytics" element={
-          <Protected>
-            <Analytics />
-          </Protected>
-        } />
+        {/* Student Routes */}
+        <Route element={<ProtectedRoute allowedRoles={['student']} />}>
+          <Route path="/student" element={<StudentDashboard />} />
+          <Route path="/student/scan" element={<StudentScan />} />
+        </Route>
 
-        {/* Catch-all */}
+        {/* Catch All */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
-  )
-}
+  );
+};
+
+export default App;
