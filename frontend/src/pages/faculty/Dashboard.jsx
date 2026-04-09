@@ -48,7 +48,8 @@ const FacultyDashboard = () => {
   };
 
   const filteredSubjects = subjects.filter(sub => {
-    return selSemester === 'all' || String(sub.semester) === String(selSemester);
+    if (selSemester === 'all') return true;
+    return String(sub.semester) === String(selSemester);
   });
 
   const startSession = async (subjectId) => {
@@ -91,7 +92,10 @@ const FacultyDashboard = () => {
         {/* Subjects List */}
         <div className="glass-panel" style={{ padding: '24px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-            <h2 style={{ fontSize: '20px' }}>Your Subjects</h2>
+            <div>
+              <h2 style={{ fontSize: '20px' }}>Your Subjects</h2>
+              <p style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Debug: Received {subjects.length} total subjects from server</p>
+            </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>Filter by Semester:</span>
                <select 
