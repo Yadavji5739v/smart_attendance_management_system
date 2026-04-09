@@ -4,6 +4,7 @@ import { Play, Square, Users } from 'lucide-react';
 
 const FacultyDashboard = () => {
   const [subjects, setSubjects] = useState([]);
+  const [selSemester, setSelSemester] = useState('all');
   const [loading, setLoading] = useState(true);
   
   // Session State
