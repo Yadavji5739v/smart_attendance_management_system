@@ -14,10 +14,8 @@ const Login = () => {
     setError('');
     setLoading(true);
 
-    const trimmedEmail = email.trim().toLowerCase();
-    
-    // If it doesn't contain '@', it's a student login name/UID, so we append '@college.edu'
-    const loginIdentifier = trimmedEmail.includes('@') ? trimmedEmail : `${trimmedEmail}@college.edu`;
+    // If it doesn't contain '@', it's a student login name, so we append '@college.edu'
+    const loginIdentifier = email.includes('@') ? email : `${email.toLowerCase()}@college.edu`;
 
     const result = await login(loginIdentifier, password);
     if (!result.success) {

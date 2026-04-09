@@ -16,9 +16,9 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ message: 'Please provide email and password' });
     }
 
-    const { rows } = await db.query('SELECT * FROM users WHERE LOWER(email) = LOWER($1)', [email]);
+    const { rows } = await db.query('SELECT * FROM users WHERE email = $1', [email]);
     if (rows.length === 0) {
-      return res.status(401).json({ message: 'User not found' });
+      return res.status(401).json({ message: 'Invalid credentials' });
     }
 
     const user = rows[0];
