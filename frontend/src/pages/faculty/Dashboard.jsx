@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import api from '../../../api';
-import QRCode from 'html5-qrcode'; // Only used in Scan, but we might render raw img here
+import api from '../../api';
 import { Play, Square, Users } from 'lucide-react';
 
 const FacultyDashboard = () => {

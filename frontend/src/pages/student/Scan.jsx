@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Html5QrcodeScanner } from 'html5-qrcode';
-import api from '../../../api';
+import api from '../../api';
 import { CheckCircle, XCircle } from 'lucide-react';
 
 const StudentScan = () => {
