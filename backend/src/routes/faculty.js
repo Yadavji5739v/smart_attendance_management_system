@@ -10,10 +10,8 @@ router.use(authorizeRoles('faculty'));
 // @route   GET /api/faculty/subjects
 // @desc    Get subjects assigned to the logged-in faculty
 // @access  Private (Faculty)
-router.get('/subjects', async (req, res) => {
-  try {
-    // Assuming faculty is assigned based on branch, or later logic. For now, fetch subjects for their branch
-    const { rows } = await db.query('SELECT * FROM subjects WHERE branch_id = $1', [req.user.branch_id]);
+    // Fetch subjects specifically allotted to this faculty member via the uid column
+    const { rows } = await db.query('SELECT * FROM subjects WHERE uid = $1', [req.user.user_id]);
     res.json(rows);
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
