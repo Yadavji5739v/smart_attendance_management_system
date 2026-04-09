@@ -32,7 +32,12 @@ export const AuthProvider = ({ children }) => {
       setUser(data.user);
       return { success: true };
     } catch (error) {
-      return { success: false, message: error.response?.data?.message || 'Login failed' };
+      const msg = error.response?.data?.message || error.message;
+      const status = error.response?.status;
+      return { 
+        success: false, 
+        message: status ? `Error ${status}: ${msg}` : `Network Error: ${msg}`
+      };
     }
   };
 
