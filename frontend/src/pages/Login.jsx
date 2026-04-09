@@ -14,7 +14,10 @@ const Login = () => {
     setError('');
     setLoading(true);
 
-    const result = await login(email, password);
+    // If it doesn't contain '@', it's a student UID, so we append '@'
+    const loginIdentifier = email.includes('@') ? email : `${email}@`;
+
+    const result = await login(loginIdentifier, password);
     if (!result.success) {
       setError(result.message);
     }
@@ -46,12 +49,12 @@ const Login = () => {
 
         <form onSubmit={handleSubmit}>
           <div className="input-group">
-            <label className="input-label" htmlFor="email">Email Address</label>
+            <label className="input-label" htmlFor="email">UID or Email Address</label>
             <input
               id="email"
-              type="email"
+              type="text"
               className="input-field"
-              placeholder="name@example.com"
+              placeholder="UID (e.g. 23131001) or Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
