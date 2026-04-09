@@ -97,12 +97,12 @@ router.get('/subjects', async (req, res) => {
 });
 
 router.post('/subjects', async (req, res) => {
-  const { subject_name, subject_code, uid, branch_id, total_classes } = req.body;
+  const { subject_name, subject_code, uid, branch_id, total_classes, semester } = req.body;
   try {
     const { rows } = await db.query(
-      `INSERT INTO subjects (subject_name, subject_code, uid, branch_id, total_classes) 
-       VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-      [subject_name, subject_code, uid, branch_id, total_classes]
+      `INSERT INTO subjects (subject_name, subject_code, uid, branch_id, total_classes, semester) 
+       VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+      [subject_name, subject_code, uid, branch_id, total_classes, semester]
     );
     res.status(201).json(rows[0]);
   } catch (error) {

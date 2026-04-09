@@ -46,16 +46,15 @@ const FacultyDashboard = () => {
     }
   };
 
+  const filteredSubjects = subjects.filter(sub => {
+    return selSemester === 'all' || String(sub.semester) === String(selSemester);
+  });
+
   const startSession = async (subjectId) => {
     try {
       const { data } = await api.post('/faculty/sessions', { subject_id: subjectId, duration_minutes: 5 });
       setActiveSession(data);
       
-      // Generate QR Code data URL using lightweight canvas or library if needed. 
-      // But we can construct standard QR payload. The easiest way is using an online API or a frontend QR generator library.
-      // Wait, since we have 'qrcode' in backend, did backend return qr_image? Let me check backend code for faculty.js post /sessions.
-      // Ah! The original controller returned qr_image. In my rewrite, I returned qr_token. Let's fix that by rendering the QR code on frontend using an image API or rendering div.
-      // I will construct Google Chart API URL for the QR code for simplicity and reliability.
       const payload = JSON.stringify({ session_id: data.session_id, token: data.qr_token, expiry: data.expiry_time });
       const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(payload)}`;
       setQrImage(qrUrl);
@@ -90,12 +89,33 @@ const FacultyDashboard = () => {
         
         {/* Subjects List */}
         <div className="glass-panel" style={{ padding: '24px' }}>
-          <h2 style={{ fontSize: '20px', marginBottom: '20px' }}>Your Subjects</h2>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+            <h2 style={{ fontSize: '20px' }}>Your Subjects</h2>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+               <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>Filter by Semester:</span>
+               <select 
+                value={selSemester}
+                onChange={(e) => setSelSemester(e.target.value)}
+                style={{ 
+                  background: 'rgba(0,0,0,0.3)', color: '#fff', 
+                  border: '1px solid var(--border-glass)', borderRadius: '8px', 
+                  padding: '4px 12px', fontSize: '14px' 
+                }}
+               >
+                 <option value="all">All Semesters</option>
+                 {[1,2,3,4,5,6,7,8].map(s => <option key={s} value={s}>Semester {s}</option>)}
+               </select>
+            </div>
+          </div>
+
           <div style={{ display: 'grid', gap: '16px' }}>
-            {subjects.map(sub => (
+            {filteredSubjects.map(sub => (
               <div key={sub.subject_id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px', background: 'rgba(0,0,0,0.2)', borderRadius: '12px', border: '1px solid var(--border-glass)' }}>
                 <div>
-                  <div style={{ fontWeight: '600', fontSize: '16px', color: 'var(--primary)' }}>{sub.subject_code}</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <div style={{ fontWeight: '600', fontSize: '16px', color: 'var(--primary)' }}>{sub.subject_code}</div>
+                    <span style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '4px', background: 'rgba(99, 102, 241, 0.1)', color: 'var(--primary)' }}>S{sub.semester || '?'}</span>
+                  </div>
                   <div style={{ fontSize: '14px' }}>{sub.subject_name}</div>
                 </div>
                 <button 
@@ -108,8 +128,8 @@ const FacultyDashboard = () => {
                 </button>
               </div>
             ))}
-            {subjects.length === 0 && (
-              <div style={{ padding: '20px', textAlign: 'center', color: 'var(--text-muted)' }}>No subjects assigned.</div>
+            {filteredSubjects.length === 0 && (
+              <div style={{ padding: '20px', textAlign: 'center', color: 'var(--text-muted)' }}>No subjects allotted for this semester.</div>
             )}
           </div>
         </div>

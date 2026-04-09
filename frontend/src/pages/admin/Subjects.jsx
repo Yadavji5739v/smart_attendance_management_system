@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../api';
-import { Plus } from 'lucide-react';
+import { Plus, BookOpen } from 'lucide-react';
+import FilterBar from '../../components/analytics/FilterBar';
 
 const AdminSubjects = () => {
   const [subjects, setSubjects] = useState([]);
   const [branches, setBranches] = useState([]);
+  const [filters, setFilters] = useState({ branch_id: 'all', semester: 'all' });
   const [loading, setLoading] = useState(true);
   
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({ 
-    subject_name: '', subject_code: '', uid: '', branch_id: '', total_classes: 40 
+    subject_name: '', subject_code: '', uid: '', branch_id: '', total_classes: 40, semester: 1 
   });
 
   useEffect(() => {
@@ -39,15 +41,22 @@ const AdminSubjects = () => {
     try {
       await api.post('/admin/subjects', {
         ...formData,
-        total_classes: parseInt(formData.total_classes)
+        total_classes: parseInt(formData.total_classes),
+        semester: parseInt(formData.semester)
       });
       setShowModal(false);
-      setFormData({ subject_name: '', subject_code: '', uid: '', branch_id: branches[0]?.branch_id || '', total_classes: 40 });
+      setFormData({ subject_name: '', subject_code: '', uid: '', branch_id: branches[0]?.branch_id || '', total_classes: 40, semester: 1 });
       fetchData();
     } catch (error) {
       alert('Error adding subject');
     }
   };
+
+  const filteredSubjects = subjects.filter(sub => {
+    const branchMatch = filters.branch_id === 'all' || String(sub.branch_id) === String(filters.branch_id);
+    const semMatch = filters.semester === 'all' || String(sub.semester) === String(filters.semester);
+    return branchMatch && semMatch;
+  });
 
   if (loading) return <div>Loading...</div>;
 
@@ -56,12 +65,14 @@ const AdminSubjects = () => {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
         <div>
           <h1 style={{ fontSize: '28px', fontWeight: '700', marginBottom: '8px' }}>Subjects</h1>
-          <p style={{ color: 'var(--text-muted)' }}>Manage course subjects.</p>
+          <p style={{ color: 'var(--text-muted)' }}>Manage course subjects and semester allotments.</p>
         </div>
         <button className="btn btn-primary" onClick={() => setShowModal(true)}>
           <Plus size={18} /> Add Subject
         </button>
       </div>
+
+      <FilterBar onFilterChange={setFilters} />
 
       <div className="glass-panel table-container">
         <table>
@@ -69,21 +80,27 @@ const AdminSubjects = () => {
             <tr>
               <th>Code</th>
               <th>Subject Name</th>
-              <th>Branch ID</th>
+              <th>Sem</th>
+              <th>Branch</th>
               <th>Classes</th>
             </tr>
           </thead>
           <tbody>
-            {subjects.map(s => (
+            {filteredSubjects.map(s => (
               <tr key={s.subject_id}>
                 <td style={{ fontWeight: 600, color: 'var(--primary)' }}>{s.subject_code}</td>
                 <td>{s.subject_name}</td>
-                <td>#{s.branch_id}</td>
+                <td>
+                  <span style={{ padding: '4px 8px', borderRadius: '4px', background: 'rgba(99, 102, 241, 0.1)', color: 'var(--primary)', fontWeight: '600' }}>
+                    S{s.semester || '?'}
+                  </span>
+                </td>
+                <td>{branches.find(b => b.branch_id === s.branch_id)?.branch_name || '...'}</td>
                 <td>{s.total_classes}</td>
               </tr>
             ))}
-            {subjects.length === 0 && (
-              <tr><td colSpan="4" style={{ textAlign: 'center' }}>No subjects found</td></tr>
+            {filteredSubjects.length === 0 && (
+              <tr><td colSpan="5" style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>No subjects found for current filters.</td></tr>
             )}
           </tbody>
         </table>
@@ -106,13 +123,23 @@ const AdminSubjects = () => {
                 <label className="input-label">Unique ID (UID)</label>
                 <input className="input-field" required value={formData.uid} onChange={e => setFormData({...formData, uid: e.target.value})} />
               </div>
-              <div className="input-group">
-                <label className="input-label">Branch</label>
-                <select className="input-field" style={{ background: 'var(--bg-secondary)' }} value={formData.branch_id} onChange={e => setFormData({...formData, branch_id: e.target.value})}>
-                  {branches.map(b => (
-                    <option key={b.branch_id} value={b.branch_id}>{b.branch_name}</option>
-                  ))}
-                </select>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                <div className="input-group">
+                  <label className="input-label">Branch</label>
+                  <select className="input-field" style={{ background: 'var(--bg-secondary)' }} value={formData.branch_id} onChange={e => setFormData({...formData, branch_id: e.target.value})}>
+                    {branches.map(b => (
+                      <option key={b.branch_id} value={b.branch_id}>{b.branch_name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="input-group">
+                  <label className="input-label">Semester</label>
+                  <select className="input-field" style={{ background: 'var(--bg-secondary)' }} value={formData.semester} onChange={e => setFormData({...formData, semester: e.target.value})}>
+                    {[1,2,3,4,5,6,7,8].map(s => (
+                      <option key={s} value={s}>Semester {s}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
               <div className="input-group">
                 <label className="input-label">Total Classes</label>
