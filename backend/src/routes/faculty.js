@@ -10,8 +10,9 @@ router.use(authorizeRoles('faculty'));
 // @route   GET /api/faculty/subjects
 // @desc    Get subjects assigned to the logged-in faculty
 // @access  Private (Faculty)
-    // Fetch subjects specifically allotted to this faculty member via the uid column
-    const { rows } = await db.query('SELECT * FROM subjects WHERE uid = $1', [req.user.user_id]);
+    // Fetch subjects specifically allotted to this faculty member (resilient to ID type)
+    const faculty_id = parseInt(req.user.user_id);
+    const { rows } = await db.query('SELECT * FROM subjects WHERE uid = $1', [faculty_id]);
     res.json(rows);
   } catch (error) {
     res.status(500).json({ message: 'Server error' });

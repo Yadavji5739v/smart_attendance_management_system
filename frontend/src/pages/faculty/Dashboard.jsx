@@ -87,17 +87,19 @@ const FacultyDashboard = () => {
         <p style={{ color: 'var(--text-muted)' }}>Manage your subjects and attendance sessions.</p>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: activeSession ? '1fr 350px' : '1fr', gap: '24px', alignItems: 'start' }}>
+      <div className="responsive-dashboard-grid" style={{ 
+        display: 'grid', 
+        gridTemplateColumns: activeSession ? 'repeat(auto-fit, minmax(300px, 1fr))' : '1fr', 
+        gap: '24px', 
+        alignItems: 'start' 
+      }}>
         
         {/* Subjects List */}
         <div className="glass-panel" style={{ padding: '24px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-            <div>
-              <h2 style={{ fontSize: '20px' }}>Your Subjects</h2>
-              <p style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Debug: Received {subjects.length} total subjects from server</p>
-            </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
+            <h2 style={{ fontSize: '20px' }}>Your Subjects</h2>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-               <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>Filter by Semester:</span>
+               <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>Sem:</span>
                <select 
                 value={selSemester}
                 onChange={(e) => setSelSemester(e.target.value)}
@@ -107,16 +109,16 @@ const FacultyDashboard = () => {
                   padding: '4px 12px', fontSize: '14px' 
                 }}
                >
-                 <option value="all">All Semesters</option>
-                 {[1,2,3,4,5,6,7,8].map(s => <option key={s} value={s}>Semester {s}</option>)}
+                 <option value="all">All</option>
+                 {[1,2,3,4,5,6,7,8].map(s => <option key={s} value={s}>S{s}</option>)}
                </select>
             </div>
           </div>
 
           <div style={{ display: 'grid', gap: '16px' }}>
             {filteredSubjects.map(sub => (
-              <div key={sub.subject_id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px', background: 'rgba(0,0,0,0.2)', borderRadius: '12px', border: '1px solid var(--border-glass)' }}>
-                <div>
+              <div key={sub.subject_id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px', background: 'rgba(0,0,0,0.2)', borderRadius: '12px', border: '1px solid var(--border-glass)', flexWrap: 'wrap', gap: '12px' }}>
+                <div style={{ flex: 1, minWidth: '150px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <div style={{ fontWeight: '600', fontSize: '16px', color: 'var(--primary)' }}>{sub.subject_code}</div>
                     <span style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '4px', background: 'rgba(99, 102, 241, 0.1)', color: 'var(--primary)' }}>S{sub.semester || '?'}</span>
@@ -127,9 +129,9 @@ const FacultyDashboard = () => {
                   className="btn btn-primary"
                   onClick={() => startSession(sub.subject_id)}
                   disabled={!!activeSession}
-                  style={{ opacity: activeSession ? 0.5 : 1 }}
+                  style={{ opacity: activeSession ? 0.5 : 1, width: 'auto', flexShrink: 0 }}
                 >
-                  <Play size={16} /> Start Session
+                  <Play size={16} /> Start
                 </button>
               </div>
             ))}
