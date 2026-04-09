@@ -1,24 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../api';
-import { AlertCircle, CheckCircle } from 'lucide-react';
+import { AlertCircle, CheckCircle, TrendingUp } from 'lucide-react';
+import { AttendanceTrendChart } from '../../components/analytics/AnalyticsCharts';
 
 const StudentDashboard = () => {
   const [summary, setSummary] = useState([]);
+  const [analytics, setAnalytics] = useState({ trend: [] });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchSummary = async () => {
-      try {
-        const { data } = await api.get('/student/dashboard');
-        setSummary(data);
-      } catch (error) {
-        console.error("Failed to load dashboard", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchSummary();
+    fetchDashboardData();
   }, []);
+
+  const fetchDashboardData = async () => {
+    setLoading(true);
+    try {
+      const summaryRes = await api.get('/student/dashboard');
+      setSummary(summaryRes.data);
+
+      const analyticsRes = await api.get('/analytics/student/my');
+      setAnalytics(analyticsRes.data);
+    } catch (error) {
+      console.error("Failed to load dashboard", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (loading) return <div>Loading dashboard...</div>;
 
@@ -42,6 +49,15 @@ const StudentDashboard = () => {
           </div>
         </div>
       )}
+
+      {/* Analytics Section */}
+      <div className="glass-panel" style={{ padding: '24px', marginBottom: '32px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '24px' }}>
+          <TrendingUp size={20} color="var(--primary)" />
+          <h3 style={{ fontSize: '18px', fontWeight: '600' }}>Overall Attendance Trend</h3>
+        </div>
+        <AttendanceTrendChart data={analytics.trend || []} />
+      </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
         {summary.map(sub => (
