@@ -60,18 +60,23 @@ const FilterBar = ({ onFilterChange }) => {
           value={selectedBranch} 
           onChange={handleBranchChange}
           style={{ 
-            background: 'rgba(0,0,0,0.3)', 
+            background: 'rgba(99, 102, 241, 0.15)', 
             color: '#fff', 
-            border: '1px solid var(--border-glass)',
-            borderRadius: '8px',
-            padding: '6px 12px',
+            border: '1px solid rgba(99, 102, 241, 0.3)',
+            borderRadius: '10px',
+            padding: '8px 16px',
             fontSize: '14px',
-            outline: 'none'
+            outline: 'none',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease',
+            boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
           }}
+          onMouseEnter={(e) => e.target.style.background = 'rgba(99, 102, 241, 0.25)'}
+          onMouseLeave={(e) => e.target.style.background = 'rgba(99, 102, 241, 0.15)'}
         >
-          <option value="all">All Branches</option>
+          <option value="all" style={{ background: '#131A2A' }}>All Branches</option>
           {branches.map(b => (
-            <option key={b.branch_id} value={b.branch_id}>{b.branch_name}</option>
+            <option key={b.branch_id} value={b.branch_id} style={{ background: '#131A2A' }}>{b.branch_name}</option>
           ))}
         </select>
       </div>
@@ -86,19 +91,25 @@ const FilterBar = ({ onFilterChange }) => {
           value={selectedSemester} 
           onChange={handleSemesterChange}
           style={{ 
-            background: 'rgba(0,0,0,0.3)', 
+            background: 'rgba(236, 72, 153, 0.15)', 
             color: '#fff', 
-            border: '1px solid var(--border-glass)',
-            borderRadius: '8px',
-            padding: '6px 12px',
+            border: '1px solid rgba(236, 72, 153, 0.3)',
+            borderRadius: '10px',
+            padding: '8px 16px',
             fontSize: '14px',
-            outline: 'none'
+            outline: 'none',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease',
+            boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
           }}
+          onMouseEnter={(e) => e.target.style.background = 'rgba(236, 72, 153, 0.25)'}
+          onMouseLeave={(e) => e.target.style.background = 'rgba(236, 72, 153, 0.15)'}
         >
           {semesters.map(s => (
-            <option key={s} value={s}>{s === 'all' ? 'All Semesters' : `Semester ${s}`}</option>
+            <option key={s} value={s} style={{ background: '#131A2A' }}>{s === 'all' ? 'All Semesters' : `Semester ${s}`}</option>
           ))}
         </select>
+
       </div>
     </div>
   );

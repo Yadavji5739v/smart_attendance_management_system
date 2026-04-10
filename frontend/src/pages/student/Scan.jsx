@@ -1,53 +1,59 @@
-import React, { useState, useEffect } from 'react';
-import { Html5QrcodeScanner } from 'html5-qrcode';
+import React, { useState, useEffect, useRef } from 'react';
+import { Html5Qrcode } from 'html5-qrcode';
+import { useNavigate } from 'react-router-dom';
 import api from '../../api';
-import { CheckCircle, XCircle } from 'lucide-react';
+import { CheckCircle, XCircle, ArrowLeft } from 'lucide-react';
 
 const StudentScan = () => {
   const [scanResult, setScanResult] = useState(null);
   const [error, setError] = useState(null);
   const [scanning, setScanning] = useState(true);
+  const scannerRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Check if element exists before creating scanner
-    const scannerElement = document.getElementById("reader");
-    if (!scannerElement) return;
+    if (!scanning) return;
 
-    let scanner;
-    
-    // Slight delay to ensure DOM is ready
-    const timer = setTimeout(() => {
-      if (document.getElementById("reader")) {
-        try {
-          scanner = new Html5QrcodeScanner(
-            "reader",
-            { fps: 10, qrbox: { width: 250, height: 250 }, aspectRatio: 1.0 },
-            /* verbose= */ false
-          );
-          
-          scanner.render(onScanSuccess, onScanFailure);
-        } catch (e) {
-          console.error("Scanner init error", e);
-        }
+    const startScanner = async () => {
+      try {
+        const html5QrCode = new Html5Qrcode("reader");
+        scannerRef.current = html5QrCode;
+
+        const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+        
+        // Force backward camera (environment)
+        await html5QrCode.start(
+          { facingMode: "environment" },
+          config,
+          onScanSuccess,
+          onScanFailure
+        );
+      } catch (err) {
+        console.error("Scanner start error:", err);
+        setError("Could not access camera. Please ensure permissions are granted.");
       }
-    }, 100);
+    };
+
+    // Slight delay to ensure DOM element is ready
+    const timer = setTimeout(startScanner, 100);
 
     return () => {
       clearTimeout(timer);
-      if (scanner) {
-        scanner.clear().catch(error => {
-          console.error("Failed to clear html5QrcodeScanner. ", error);
-        });
+      if (scannerRef.current && scannerRef.current.isScanning) {
+        scannerRef.current.stop().catch(err => console.error("Error stopping scanner:", err));
       }
     };
   }, [scanning]);
 
-  const onScanSuccess = async (decodedText, decodedResult) => {
+  const onScanSuccess = async (decodedText) => {
     try {
       const data = JSON.parse(decodedText);
       if (data.session_id && data.token) {
+        // Stop scanning immediately
+        if (scannerRef.current) {
+          await scannerRef.current.stop();
+        }
         setScanning(false);
-        // Ensure scanner is cleared completely internally via the component reload logic below
         markAttendance(data);
       } else {
         setError('Invalid QR format. Please scan a valid faculty QR code.');
@@ -58,7 +64,7 @@ const StudentScan = () => {
   };
 
   const onScanFailure = (error) => {
-    // Keep scanning
+    // Expected behavior, we don't need to log every failure
   };
 
   const markAttendance = async (data) => {
@@ -84,15 +90,19 @@ const StudentScan = () => {
         
         {scanning ? (
           <div>
-            <div id="reader" style={{ width: '100%', borderRadius: '12px', overflow: 'hidden', background: 'white' }}></div>
-            {error && <div style={{ color: 'var(--danger)', marginTop: '16px', fontSize: '14px' }}>{error}</div>}
-            <style>
-              {`
-                #reader__scan_region img { display: none !important; }
-                #reader__dashboard_section_csr span { color: black !important; }
-                #reader__dashboard_section_csr button { padding: 8px 16px; background: #6366F1; color: white; border: none; border-radius: 6px; cursor: pointer; }
-              `}
-            </style>
+            <div id="reader" style={{ width: '100%', borderRadius: '12px', overflow: 'hidden', background: '#000' }}></div>
+            {error && (
+              <div style={{ 
+                color: 'var(--danger)', 
+                marginTop: '16px', 
+                fontSize: '14px',
+                padding: '12px',
+                background: 'rgba(239, 68, 68, 0.1)',
+                borderRadius: '8px'
+              }}>
+                {error}
+              </div>
+            )}
           </div>
         ) : (
           <div style={{ padding: '40px 0', animation: 'fadeIn 0.5s ease' }}>
@@ -109,21 +119,18 @@ const StudentScan = () => {
                 <div style={{ display: 'inline-flex', width: '80px', height: '80px', borderRadius: '50%', background: 'rgba(239,68,68,0.1)', alignItems: 'center', justifyContent: 'center', marginBottom: '24px', color: 'var(--danger)' }}>
                   <XCircle size={48} />
                 </div>
-                <h2 style={{ fontSize: '24px', fontWeight: '700', color: 'var(--danger)', marginBottom: '12px' }}>Failed</h2>
-                <p style={{ color: 'var(--text-muted)' }}>{scanResult?.message}</p>
+                <h2 style={{ fontSize: '24px', fontWeight: '700', color: 'var(--danger)', marginBottom: '12px' }}>{scanResult ? 'Failed' : 'Processing...'}</h2>
+                <p style={{ color: 'var(--text-muted)' }}>{scanResult?.message || 'Please wait...'}</p>
               </>
             )}
 
             <button 
               className="btn btn-primary" 
-              style={{ marginTop: '32px' }}
-              onClick={() => {
-                setScanResult(null);
-                setError(null);
-                setScanning(true);
-              }}
+              style={{ marginTop: '32px', width: '100%' }}
+              onClick={() => navigate('/student')}
             >
-              Scan Again
+              <ArrowLeft size={18} />
+              Go Back
             </button>
           </div>
         )}
@@ -133,3 +140,4 @@ const StudentScan = () => {
 };
 
 export default StudentScan;
+
