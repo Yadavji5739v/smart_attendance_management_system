@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import { LayoutDashboard, Users, MapPin, BookOpen, LogOut, CheckSquare, ScanLine, FileBarChart } from 'lucide-react';
+import { LayoutDashboard, Users, MapPin, BookOpen, LogOut, CheckSquare, ScanLine, FileBarChart, QrCode } from 'lucide-react';
 
 const Sidebar = () => {
   const { user, logout } = useContext(AuthContext);
@@ -26,6 +26,7 @@ const Sidebar = () => {
       case 'faculty':
         return [
           { to: '/faculty', icon: <LayoutDashboard size={20} />, label: 'Dashboard' },
+          { to: '/faculty/qr-generator', icon: <QrCode size={20} />, label: 'QR Generator' },
           { to: '/faculty/reports', icon: <FileBarChart size={20} />, label: 'Reports' },
         ];
       case 'student':

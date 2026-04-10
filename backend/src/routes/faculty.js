@@ -10,7 +10,9 @@ router.use(authorizeRoles('faculty'));
 // @route   GET /api/faculty/subjects
 // @desc    Get subjects assigned to the logged-in faculty
 // @access  Private (Faculty)
-    // Fetch subjects specifically allotted to this faculty member (resilient to ID type)
+router.get('/subjects', async (req, res) => {
+  try {
+    // Fetch subjects specifically allotted to this faculty member
     const faculty_id = parseInt(req.user.user_id);
     const { rows } = await db.query('SELECT * FROM subjects WHERE uid = $1', [faculty_id]);
     res.json(rows);
