@@ -51,10 +51,27 @@ router.get('/dashboard', async (req, res) => {
   }
 });
 
+// Helper to calculate distance in metres
+function getDistance(lat1, lon1, lat2, lon2) {
+  if (!lat1 || !lon1 || !lat2 || !lon2) return Infinity;
+  const R = 6371e3; 
+  const φ1 = lat1 * Math.PI/180;
+  const φ2 = lat2 * Math.PI/180;
+  const Δφ = (lat2-lat1) * Math.PI/180;
+  const Δλ = (lon2-lon1) * Math.PI/180;
+
+  const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+          Math.cos(φ1) * Math.cos(φ2) *
+          Math.sin(Δλ/2) * Math.sin(Δλ/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+  return R * c; 
+}
+
 // @route   POST /api/student/scan
 // @desc    Mark attendance via QR scan
 router.post('/scan', async (req, res) => {
-  const { session_id, token } = req.body;
+  const { session_id, token, latitude, longitude, device_id } = req.body;
   const student_id = req.user.user_id;
 
   try {
@@ -64,8 +81,17 @@ router.post('/scan', async (req, res) => {
     }
 
     const session = rows[0];
-    const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+    
+    // 1. Verify Geofencing
+    if (session.latitude && session.longitude) {
+      const distance = getDistance(latitude, longitude, parseFloat(session.latitude), parseFloat(session.longitude));
+      if (distance > 100) { // 100 metres threshold
+        return res.status(403).json({ message: `Access denied. You are too far from the classroom (${Math.round(distance)}m).` });
+      }
+    }
 
+    // 2. TOKEN Validation
+    const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
     if (tokenHash !== session.qr_token_hash) {
       return res.status(400).json({ message: 'Invalid QR token' });
     }
@@ -74,18 +100,26 @@ router.post('/scan', async (req, res) => {
       return res.status(400).json({ message: 'QR code has expired' });
     }
 
-    // Check if already marked
+    // 3. Device ID Check (Prevent multiple students from same device)
+    if (device_id) {
+       const deviceUsed = await db.query('SELECT * FROM attendance WHERE session_id = $1 AND device_id = $2 AND student_id != $3', [session_id, device_id, student_id]);
+       if (deviceUsed.rows.length > 0) {
+         return res.status(403).json({ message: 'This device has already been used to mark attendance for another student in this session.' });
+       }
+    }
+
+    // 4. Mark Attendance
     const existing = await db.query('SELECT * FROM attendance WHERE session_id = $1 AND student_id = $2', [session_id, student_id]);
     if (existing.rows.length > 0 && existing.rows[0].status === 'present') {
       return res.status(400).json({ message: 'Attendance already marked for this session' });
     }
 
     await db.query(
-      `INSERT INTO attendance (session_id, student_id, status, scan_time) 
-       VALUES ($1, $2, 'present', NOW())
+      `INSERT INTO attendance (session_id, student_id, status, scan_time, device_id) 
+       VALUES ($1, $2, 'present', NOW(), $3)
        ON CONFLICT (session_id, student_id) 
-       DO UPDATE SET status = 'present', scan_time = NOW()`,
-      [session_id, student_id]
+       DO UPDATE SET status = 'present', scan_time = NOW(), device_id = $3`,
+      [session_id, student_id, device_id]
     );
 
     res.json({ message: 'Attendance marked successfully' });

@@ -57,6 +57,20 @@ const FacultyQRGenerator = () => {
     }
   };
 
+  const getGeoLocation = () => {
+    return new Promise((resolve, reject) => {
+      if (!navigator.geolocation) {
+        reject(new Error('Geolocation is not supported by your browser'));
+      } else {
+        navigator.geolocation.getCurrentPosition(
+          (position) => resolve(position.coords),
+          (err) => reject(new Error('Please enable location access to start a session')),
+          { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+        );
+      }
+    });
+  };
+
   const generateQR = async () => {
     if (!selectedSubject) {
       setError('Please select a subject first');
@@ -65,9 +79,20 @@ const FacultyQRGenerator = () => {
     setError('');
     setGenerating(true);
     try {
+      let coords = { latitude: null, longitude: null };
+      try {
+        coords = await getGeoLocation();
+      } catch (geoErr) {
+        setError(geoErr.message);
+        setGenerating(false);
+        return;
+      }
+
       const { data } = await api.post('/faculty/sessions', {
         subject_id: selectedSubject,
-        duration_minutes: duration
+        duration_minutes: duration,
+        latitude: coords.latitude,
+        longitude: coords.longitude
       });
       
       const payload = JSON.stringify({

@@ -67,11 +67,50 @@ const StudentScan = () => {
     // Expected behavior, we don't need to log every failure
   };
 
+  const getGeoLocation = () => {
+    return new Promise((resolve, reject) => {
+      if (!navigator.geolocation) {
+        reject(new Error('Geolocation is not supported by your browser'));
+      } else {
+        const options = { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 };
+        navigator.geolocation.getCurrentPosition(
+          (pos) => resolve(pos.coords),
+          (err) => reject(new Error('Please enable location access to mark attendance')),
+          options
+        );
+      }
+    });
+  };
+
+  const getDeviceId = () => {
+    let deviceId = localStorage.getItem('attendance_device_id');
+    if (!deviceId) {
+      deviceId = 'dev_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+      localStorage.setItem('attendance_device_id', deviceId);
+    }
+    return deviceId;
+  };
+
   const markAttendance = async (data) => {
     try {
+      setScanResult({ success: false, message: 'Verifying location...' });
+      
+      let coords = { latitude: null, longitude: null };
+      try {
+        coords = await getGeoLocation();
+      } catch (geoErr) {
+        setScanResult({ success: false, message: geoErr.message });
+        return;
+      }
+
+      const deviceId = getDeviceId();
+
       const response = await api.post('/student/scan', {
         session_id: data.session_id,
-        token: data.token
+        token: data.token,
+        latitude: coords.latitude,
+        longitude: coords.longitude,
+        device_id: deviceId
       });
       setScanResult({ success: true, message: response.data.message });
     } catch (err) {

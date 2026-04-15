@@ -51,6 +51,8 @@ CREATE TABLE sessions (
     start_time   DATETIME NOT NULL,
     expiry_time  DATETIME NOT NULL,
     is_active    BOOLEAN DEFAULT TRUE,
+    latitude     DECIMAL(10, 8),
+    longitude    DECIMAL(11, 8),
     FOREIGN KEY (subject_id) REFERENCES subjects(subject_id),
     FOREIGN KEY (faculty_id) REFERENCES users(user_id)
 );
@@ -62,6 +64,7 @@ CREATE TABLE attendance (
     student_id    INT NOT NULL,
     status        ENUM('present','absent') DEFAULT 'absent',
     scan_time     DATETIME,
+    device_id     VARCHAR(255),
     FOREIGN KEY (session_id) REFERENCES sessions(session_id),
     FOREIGN KEY (student_id) REFERENCES users(user_id),
     UNIQUE KEY unique_att (session_id, student_id)

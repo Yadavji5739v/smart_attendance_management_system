@@ -24,7 +24,7 @@ router.get('/subjects', async (req, res) => {
 // @route   POST /api/faculty/sessions
 // @desc    Create a new attendance session and return QR info
 router.post('/sessions', async (req, res) => {
-  const { subject_id, duration_minutes = 5 } = req.body;
+  const { subject_id, latitude, longitude, duration_minutes = 5 } = req.body;
   const faculty_id = req.user.user_id;
 
   try {
@@ -40,9 +40,9 @@ router.post('/sessions', async (req, res) => {
     const expiry_time = new Date(Date.now() + duration_minutes * 60 * 1000);
 
     const { rows } = await db.query(
-      `INSERT INTO sessions (subject_id, faculty_id, qr_token, qr_token_hash, start_time, expiry_time, is_active)
-       VALUES ($1, $2, $3, $4, $5, $6, true) RETURNING session_id`,
-      [subject_id, faculty_id, qr_token, qr_token_hash, start_time, expiry_time]
+      `INSERT INTO sessions (subject_id, faculty_id, qr_token, qr_token_hash, start_time, expiry_time, is_active, latitude, longitude)
+       VALUES ($1, $2, $3, $4, $5, $6, true, $7, $8) RETURNING session_id`,
+      [subject_id, faculty_id, qr_token, qr_token_hash, start_time, expiry_time, latitude, longitude]
     );
 
     const session_id = rows[0].session_id;
