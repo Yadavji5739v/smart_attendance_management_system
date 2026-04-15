@@ -26,43 +26,79 @@ const Login = () => {
   };
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', padding: '20px' }}>
-      <div className="glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '420px', padding: '40px', position: 'relative', overflow: 'hidden' }}>
-        
-        {/* Background glow effect for the card */}
-        <div style={{ position: 'absolute', top: '-50px', left: '-50px', width: '150px', height: '150px', background: 'var(--primary)', filter: 'blur(80px)', opacity: 0.5, borderRadius: '50%', zIndex: -1 }}></div>
-        <div style={{ position: 'absolute', bottom: '-50px', right: '-50px', width: '150px', height: '150px', background: 'var(--secondary)', filter: 'blur(80px)', opacity: 0.5, borderRadius: '50%', zIndex: -1 }}></div>
+    <div style={{ 
+      display: 'flex', 
+      alignItems: 'center', 
+      justifyContent: 'center', 
+      minHeight: '100vh', 
+      padding: '24px',
+      position: 'relative',
+      background: 'hsl(var(--bg-main))'
+    }}>
+      {/* Dynamic Background Elements */}
+      <div style={{ position: 'absolute', top: '10%', left: '5%', width: '300px', height: '300px', background: 'hsla(var(--primary), 0.15)', filter: 'blur(120px)', borderRadius: '50%', zIndex: 0 }}></div>
+      <div style={{ position: 'absolute', bottom: '10%', right: '5%', width: '400px', height: '400px', background: 'hsla(var(--secondary), 0.1)', filter: 'blur(120px)', borderRadius: '50%', zIndex: 0 }}></div>
 
-        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '64px', height: '64px', borderRadius: '16px', background: 'linear-gradient(135deg, var(--primary), var(--secondary))', marginBottom: '16px', boxShadow: 'var(--shadow-glow)' }}>
-            <UserCircle size={36} color="white" />
+      <div className="glass-panel animate-fade-in" style={{ 
+        width: '100%', 
+        maxWidth: '440px', 
+        padding: '48px', 
+        position: 'relative', 
+        overflow: 'hidden',
+        zIndex: 1
+      }}>
+        
+        <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+          <div style={{ 
+            display: 'inline-flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            width: '72px', 
+            height: '72px', 
+            borderRadius: '20px', 
+            background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)))', 
+            marginBottom: '24px', 
+            boxShadow: '0 12px 24px -6px hsla(var(--primary), 0.5)',
+            color: 'white'
+          }}>
+            <UserCircle size={40} strokeWidth={1.5} />
           </div>
-          <h1 style={{ fontSize: '24px', fontWeight: '700', marginBottom: '8px' }}>Welcome Back</h1>
-          <p style={{ color: 'var(--text-muted)', fontSize: '14px' }}>Sign in to continue to SmartEntry</p>
+          <h1 style={{ fontSize: '32px', fontWeight: '800', marginBottom: '12px', letterSpacing: '-0.025em' }}>Welcome Back</h1>
+          <p style={{ color: 'hsl(var(--text-muted))', fontSize: '15px', fontWeight: '500' }}>Access your SmartEntry workspace</p>
         </div>
 
         {error && (
-          <div style={{ background: 'rgba(239, 68, 68, 0.1)', borderLeft: '4px solid var(--danger)', padding: '12px', borderRadius: '4px', marginBottom: '20px', color: 'var(--text-main)', fontSize: '14px' }}>
+          <div style={{ 
+            background: 'hsla(var(--danger), 0.1)', 
+            borderLeft: '4px solid hsl(var(--danger))', 
+            padding: '16px', 
+            borderRadius: '8px', 
+            marginBottom: '24px', 
+            color: 'hsl(var(--text-main))', 
+            fontSize: '14px',
+            fontWeight: '500',
+            animation: 'fadeIn 0.3s ease'
+          }}>
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit}>
-          <div className="input-group">
-            <label className="input-label" htmlFor="email">UID or Email Address</label>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          <div>
+            <label className="input-label" style={{ marginBottom: '8px', fontSize: '12px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'hsl(var(--text-dim))' }} htmlFor="email">UID or Email Address</label>
             <input
               id="email"
               type="text"
               className="input-field"
-              placeholder="UID (e.g. 23131001) or Email"
+              placeholder="e.g. 23131001 or name@college.edu"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
 
-          <div className="input-group">
-            <label className="input-label" htmlFor="password">Password</label>
+          <div>
+            <label className="input-label" style={{ marginBottom: '8px', fontSize: '12px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'hsl(var(--text-dim))' }} htmlFor="password">Security Password</label>
             <input
               id="password"
               type="password"
@@ -77,15 +113,22 @@ const Login = () => {
           <button 
             type="submit" 
             className="btn btn-primary" 
-            style={{ width: '100%', marginTop: '16px', padding: '14px' }}
+            style={{ width: '100%', marginTop: '8px', padding: '16px', fontSize: '16px' }}
             disabled={loading}
           >
-            {loading ? 'Signing in...' : <><LogIn size={18} /> Sign In</>}
+            {loading ? 'Authenticating...' : <><LogIn size={20} /> Sign In</>}
           </button>
         </form>
 
-        <div style={{ marginTop: '24px', textAlign: 'center', fontSize: '13px', color: 'var(--text-muted)' }}>
-          Secure access managed by SmartEntry
+        <div style={{ 
+          marginTop: '32px', 
+          textAlign: 'center', 
+          fontSize: '12px', 
+          color: 'hsl(var(--text-dim))',
+          fontWeight: '500',
+          letterSpacing: '0.02em'
+        }}>
+          Secure multi-factor access powered by <span style={{ color: 'hsl(var(--primary))', fontWeight: '700' }}>SmartEntry</span>
         </div>
       </div>
     </div>

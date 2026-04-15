@@ -41,16 +41,33 @@ const Sidebar = () => {
 
   return (
     <div className="sidebar">
-      <div className="sidebar-logo" style={{ marginBottom: '40px', display: 'flex', alignItems: 'center', gap: '12px', padding: '0 8px' }}>
-        <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'linear-gradient(135deg, var(--primary), var(--secondary))', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <CheckSquare size={20} color="white" />
+      <div className="sidebar-logo" style={{ marginBottom: '40px', display: 'flex', alignItems: 'center', gap: '14px', padding: '0 8px' }}>
+        <div style={{ 
+          width: '42px', 
+          height: '42px', 
+          borderRadius: '12px', 
+          background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)))', 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center',
+          boxShadow: '0 8px 16px -4px hsla(var(--primary), 0.5)'
+        }}>
+          <CheckSquare size={24} color="white" />
         </div>
-        <h2 style={{ fontSize: '18px', fontWeight: '700', color: '#fff' }}>SmartEntry</h2>
+        <h2 style={{ fontSize: '20px', fontWeight: '800', color: '#fff', letterSpacing: '-0.02em' }}>SmartEntry</h2>
       </div>
 
-      <nav className="sidebar-nav" style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
-        <div className="sidebar-logo" style={{ fontSize: '12px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px', paddingLeft: '8px' }}>
-          {user.role} Panel
+      <nav className="sidebar-nav" style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '4px' }}>
+        <div style={{ 
+          fontSize: '11px', 
+          color: 'hsl(var(--text-dim))', 
+          textTransform: 'uppercase', 
+          letterSpacing: '0.1em', 
+          marginBottom: '12px', 
+          paddingLeft: '16px',
+          fontWeight: '700'
+        }}>
+          {user.role} workspace
         </div>
         
         {getLinks().map(link => (
@@ -67,17 +84,38 @@ const Sidebar = () => {
         ))}
       </nav>
 
-      <div className="sidebar-footer" style={{ padding: '16px 8px', borderTop: '1px solid var(--border-glass)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-          <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--bg-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--border-glass)' }}>
+      <div className="sidebar-footer" style={{ marginTop: 'auto', paddingTop: '24px', borderTop: '1px solid var(--glass-border)' }}>
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: '12px', 
+          padding: '12px',
+          background: 'hsla(0, 0%, 100%, 0.03)',
+          borderRadius: 'var(--radius-md)',
+          marginBottom: '16px',
+          border: '1px solid var(--glass-border)'
+        }}>
+          <div style={{ 
+            width: '40px', 
+            height: '40px', 
+            borderRadius: '10px', 
+            background: 'linear-gradient(135deg, hsla(var(--primary), 0.2), hsla(var(--primary), 0.1))', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            border: '1px solid hsla(var(--primary), 0.2)',
+            fontSize: '16px',
+            fontWeight: '700',
+            color: 'hsl(var(--primary))'
+          }}>
             {user.name.charAt(0).toUpperCase()}
           </div>
-          <div style={{ flex: 1, overflow: 'hidden' }}>
-            <div style={{ fontSize: '14px', fontWeight: '600', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>{user.name}</div>
-            <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{user.email}</div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: '14px', fontWeight: '600', color: '#fff', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>{user.name}</div>
+            <div style={{ fontSize: '11px', color: 'hsl(var(--text-dim))', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>{user.email}</div>
           </div>
         </div>
-        <button onClick={handleLogout} className="btn" style={{ width: '100%', background: 'rgba(255,255,255,0.05)', color: 'var(--text-muted)' }}>
+        <button onClick={handleLogout} className="btn" style={{ width: '100%', background: 'hsla(0, 0%, 100%, 0.05)', color: 'hsl(var(--text-muted))', border: '1px solid var(--glass-border)' }}>
           <LogOut size={16} /> Logout
         </button>
       </div>
