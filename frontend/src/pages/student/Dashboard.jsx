@@ -123,8 +123,8 @@ const StudentDashboard = () => {
                 <th>Date</th>
                 {data.subjectStats.map(sub => (
                   <th key={sub.subject_id}>
-                    <div style={{ fontSize: '14px' }}>{sub.subject_name}</div>
-                    <div style={{ fontSize: '10px', color: 'hsl(var(--text-dim))', fontWeight: '400' }}>{sub.subject_code}</div>
+                    <div className="matrix-subject-name" style={{ fontSize: '14px' }}>{sub.subject_name}</div>
+                    <div className="matrix-subject-code" style={{ fontSize: '10px', color: 'hsl(var(--text-dim))', fontWeight: '400' }}>{sub.subject_code}</div>
                   </th>
                 ))}
               </tr>

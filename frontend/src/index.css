@@ -54,6 +54,7 @@
   padding: 12px 16px;
   text-align: center;
   border: 1px solid var(--glass-border);
+  min-width: 100px;
 }
 
 .matrix-table th:first-child, .matrix-table td:first-child {
@@ -63,6 +64,7 @@
   background: hsla(var(--bg-secondary), 0.95);
   text-align: left;
   border-right: 2px solid var(--glass-border);
+  min-width: 100px;
 }
 
 .matrix-row-summary {
@@ -210,6 +212,34 @@ body {
     margin-left: 0;
     padding: 20px;
     padding-bottom: 110px;
+  }
+
+  /* Compact Matrix for Mobile */
+  .matrix-table th, .matrix-table td {
+    padding: 8px 10px;
+    font-size: 13px;
+    min-width: 70px;
+  }
+
+  .matrix-table th:first-child, .matrix-table td:first-child {
+    min-width: 80px;
+    font-size: 11px;
+    padding-left: 8px;
+  }
+
+  .matrix-subject-name {
+    display: none;
+  }
+
+  .matrix-subject-code {
+    font-size: 11px !important;
+    font-weight: 700 !important;
+  }
+
+  .status-indicator {
+    width: 22px;
+    height: 22px;
+    font-size: 11px;
   }
 
   .mobile-only {
