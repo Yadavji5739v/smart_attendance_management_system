@@ -73,6 +73,8 @@
 .matrix-row-summary td {
   color: hsl(var(--text-main));
 }
+
+:root {
   /* Premium Dark HSL Palette */
   --bg-main: 222, 47%, 7%; /* Deep midnight navy */
   --bg-secondary: 222, 47%, 11%;
