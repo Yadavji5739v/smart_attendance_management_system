@@ -143,4 +143,89 @@ router.post('/scan', async (req, res) => {
   }
 });
 
+// @route   GET /api/student/detailed-attendance
+// @desc    Get complete attendance matrix and summary stats
+router.get('/detailed-attendance', async (req, res) => {
+  const student_id = req.user.user_id;
+  const branch_id = req.user.branch_id;
+
+  try {
+    // 1. Get all subjects for the branch
+    const { rows: subjects } = await db.query(
+      'SELECT subject_id, subject_name, subject_code FROM subjects WHERE branch_id = $1 ORDER BY subject_id', 
+      [branch_id]
+    );
+
+    // 2. Get all sessions for these subjects
+    const { rows: sessions } = await db.query(`
+      SELECT s.session_id, s.subject_id, s.start_time, TO_CHAR(s.start_time, 'DD-MM-YY') as date_str
+      FROM sessions s
+      WHERE s.subject_id IN (SELECT subject_id FROM subjects WHERE branch_id = $1)
+      ORDER BY s.start_time DESC
+    `, [branch_id]);
+
+    // 3. Get student attendance
+    const { rows: attendance } = await db.query(
+      'SELECT session_id, status FROM attendance WHERE student_id = $1 AND status = \'present\'',
+      [student_id]
+    );
+
+    const attendedSessionIds = new Set(attendance.map(a => a.session_id));
+
+    // 4. Build Subject-wise Aggregates
+    const subjectStats = subjects.map(sub => {
+      const subSessions = sessions.filter(s => s.subject_id === sub.subject_id);
+      const total = subSessions.length;
+      const present = subSessions.filter(s => attendedSessionIds.has(s.session_id)).length;
+      const absent = total - present;
+      const percentage = total > 0 ? ((present / total) * 100).toFixed(1) : "0.0";
+
+      return {
+        ...sub,
+        total,
+        present,
+        absent,
+        percentage: parseFloat(percentage)
+      };
+    });
+
+    // 5. Build Daily Matrix
+    // Group sessions by date
+    const dateMap = new Map();
+    sessions.forEach(sess => {
+      if (!dateMap.has(sess.date_str)) {
+        dateMap.set(sess.date_str, { date: sess.date_str, subjects: {} });
+      }
+      const dayData = dateMap.get(sess.date_str);
+      const isPresent = attendedSessionIds.has(sess.session_id);
+      
+      // If there are multiple sessions for the same subject on the same day, we prioritize 'P'
+      const currentStatus = dayData.subjects[sess.subject_id];
+      if (currentStatus !== 'P') {
+        dayData.subjects[sess.subject_id] = isPresent ? 'P' : 'A';
+      }
+    });
+
+    const matrix = Array.from(dateMap.values());
+
+    // 6. Overall Aggregates
+    const totalLectures = sessions.length;
+    const totalPresent = attendance.length;
+    const overallPercentage = totalLectures > 0 ? ((totalPresent / totalLectures) * 100).toFixed(1) : "0.0";
+
+    res.json({
+      summary: {
+        overallPercentage: parseFloat(overallPercentage),
+        totalLectures,
+        totalPresent
+      },
+      subjectStats,
+      matrix
+    });
+  } catch (error) {
+    console.error('Detailed Attendance Error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 module.exports = router;
