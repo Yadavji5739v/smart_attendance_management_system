@@ -95,7 +95,7 @@ router.post('/scan', async (req, res) => {
         parseFloat(session.longitude)
       );
       
-      const threshold = 250; // Increased to 250 metres for indoor GPS drift
+      const threshold = 50; // Requested to be 50 metres
       if (distance > threshold) {
         return res.status(403).json({ 
           message: `Access denied. You are too far from the classroom (${Math.round(distance)}m). Distance limit is ${threshold}m.` 
@@ -124,7 +124,8 @@ router.post('/scan', async (req, res) => {
     // 4. Mark Attendance
     const existing = await db.query('SELECT * FROM attendance WHERE session_id = $1 AND student_id = $2', [session_id, student_id]);
     if (existing.rows.length > 0 && existing.rows[0].status === 'present') {
-      return res.status(400).json({ message: 'Attendance already marked for this session' });
+      // Return 200 instead of 400 so students who re-scan see a successful state
+      return res.json({ message: 'Attendance already marked for this session' });
     }
 
     await db.query(
