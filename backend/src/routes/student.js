@@ -95,7 +95,7 @@ router.post('/scan', async (req, res) => {
         parseFloat(session.longitude)
       );
       
-      const threshold = 50; // Requested to be 50 metres
+      const threshold = 200; // Increased to 200 metres for better indoor GPS reliability
       if (distance > threshold) {
         return res.status(403).json({ 
           message: `Access denied. You are too far from the classroom (${Math.round(distance)}m). Distance limit is ${threshold}m.` 
