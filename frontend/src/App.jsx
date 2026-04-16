@@ -15,7 +15,6 @@ import AdminSubjects from './pages/admin/Subjects';
 // Faculty Pages
 import FacultyDashboard from './pages/faculty/Dashboard';
 import FacultyReports from './pages/faculty/Reports';
-import FacultyQRGenerator from './pages/faculty/QRGenerator';
 
 // Student Pages
 import StudentDashboard from './pages/student/Dashboard';
@@ -63,7 +62,6 @@ const App = () => {
         <Route element={<ProtectedRoute allowedRoles={['faculty']} />}>
           <Route path="/faculty" element={<FacultyDashboard />} />
           <Route path="/faculty/reports" element={<FacultyReports />} />
-          <Route path="/faculty/qr-generator" element={<FacultyQRGenerator />} />
         </Route>
 
         {/* Student Routes */}

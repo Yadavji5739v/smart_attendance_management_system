@@ -15,28 +15,31 @@ const Sidebar = () => {
   };
 
   const getLinks = () => {
-    switch (user.role) {
-      case 'admin':
-        return [
-          { to: '/admin', icon: <LayoutDashboard size={20} />, label: 'Dashboard' },
-          { to: '/admin/users', icon: <Users size={20} />, label: 'Users' },
-          { to: '/admin/branches', icon: <MapPin size={20} />, label: 'Branches' },
-          { to: '/admin/subjects', icon: <BookOpen size={20} />, label: 'Subjects' },
-        ];
-      case 'faculty':
-        return [
-          { to: '/faculty', icon: <LayoutDashboard size={20} />, label: 'Dashboard' },
-          { to: '/faculty/qr-generator', icon: <QrCode size={20} />, label: 'QR Generator' },
-          { to: '/faculty/reports', icon: <FileBarChart size={20} />, label: 'Reports' },
-        ];
-      case 'student':
-        return [
-          { to: '/student', icon: <LayoutDashboard size={20} />, label: 'Dashboard' },
-          { to: '/student/scan', icon: <ScanLine size={20} />, label: 'Scan QR' },
-        ];
-      default:
-        return [];
-    }
+    const baseLinks = (() => {
+      switch (user.role) {
+        case 'admin':
+          return [
+            { to: '/admin', icon: <LayoutDashboard size={20} />, label: 'Dashboard' },
+            { to: '/admin/users', icon: <Users size={20} />, label: 'Users' },
+            { to: '/admin/branches', icon: <MapPin size={20} />, label: 'Branches' },
+            { to: '/admin/subjects', icon: <BookOpen size={20} />, label: 'Subjects' },
+          ];
+        case 'faculty':
+          return [
+            { to: '/faculty', icon: <LayoutDashboard size={20} />, label: 'Dashboard' },
+            { to: '/faculty/reports', icon: <FileBarChart size={20} />, label: 'Reports' },
+          ];
+        case 'student':
+          return [
+            { to: '/student', icon: <LayoutDashboard size={20} />, label: 'Dashboard' },
+            { to: '/student/scan', icon: <ScanLine size={20} />, label: 'Scan QR' },
+          ];
+        default:
+          return [];
+      }
+    })();
+
+    return baseLinks;
   };
 
   return (
@@ -82,6 +85,24 @@ const Sidebar = () => {
             <span className="sidebar-link-label">{link.label}</span>
           </NavLink>
         ))}
+
+        {/* Mobile-only Logout Link */}
+        <div className="mobile-only" style={{ display: 'none' }}>
+           <button 
+             onClick={handleLogout} 
+             className="sidebar-link" 
+             style={{ 
+               width: '100%', 
+               background: 'transparent', 
+               border: 'none', 
+               cursor: 'pointer',
+               padding: '10px'
+             }}
+           >
+             <span className="sidebar-link-icon"><LogOut size={20} /></span>
+             <span className="sidebar-link-label">Logout</span>
+           </button>
+        </div>
       </nav>
 
       <div className="sidebar-footer" style={{ marginTop: 'auto', paddingTop: '24px', borderTop: '1px solid var(--glass-border)' }}>
