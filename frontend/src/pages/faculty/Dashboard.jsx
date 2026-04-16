@@ -52,9 +52,37 @@ const FacultyDashboard = () => {
     return String(sub.semester) === String(selSemester);
   });
 
+  const getGeoLocation = () => {
+    return new Promise((resolve, reject) => {
+      if (!navigator.geolocation) {
+        reject(new Error('Geolocation is not supported by your browser'));
+      } else {
+        const options = { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 };
+        navigator.geolocation.getCurrentPosition(
+          (pos) => resolve(pos.coords),
+          (err) => reject(new Error('Please enable location access to start a session')),
+          options
+        );
+      }
+    });
+  };
+
   const startSession = async (subjectId) => {
     try {
-      const { data } = await api.post('/faculty/sessions', { subject_id: subjectId, duration_minutes: 5 });
+      let coords = { latitude: null, longitude: null };
+      try {
+        coords = await getGeoLocation();
+      } catch (geoErr) {
+        alert(geoErr.message);
+        return;
+      }
+
+      const { data } = await api.post('/faculty/sessions', { 
+        subject_id: subjectId, 
+        duration_minutes: 5,
+        latitude: coords.latitude,
+        longitude: coords.longitude
+      });
       setActiveSession(data);
       
       const payload = JSON.stringify({ session_id: data.session_id, token: data.qr_token, expiry: data.expiry_time });

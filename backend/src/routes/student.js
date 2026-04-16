@@ -84,9 +84,22 @@ router.post('/scan', async (req, res) => {
     
     // 1. Verify Geofencing
     if (session.latitude && session.longitude) {
-      const distance = getDistance(latitude, longitude, parseFloat(session.latitude), parseFloat(session.longitude));
-      if (distance > 100) { // 100 metres threshold
-        return res.status(403).json({ message: `Access denied. You are too far from the classroom (${Math.round(distance)}m).` });
+      if (!latitude || !longitude) {
+        return res.status(403).json({ message: 'GPS coordinates required for verification.' });
+      }
+
+      const distance = getDistance(
+        parseFloat(latitude), 
+        parseFloat(longitude), 
+        parseFloat(session.latitude), 
+        parseFloat(session.longitude)
+      );
+      
+      const threshold = 250; // Increased to 250 metres for indoor GPS drift
+      if (distance > threshold) {
+        return res.status(403).json({ 
+          message: `Access denied. You are too far from the classroom (${Math.round(distance)}m). Distance limit is ${threshold}m.` 
+        });
       }
     }
 

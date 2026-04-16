@@ -72,10 +72,13 @@ const StudentScan = () => {
       if (!navigator.geolocation) {
         reject(new Error('Geolocation is not supported by your browser'));
       } else {
-        const options = { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 };
+        const options = { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 };
         navigator.geolocation.getCurrentPosition(
           (pos) => resolve(pos.coords),
-          (err) => reject(new Error('Please enable location access to mark attendance')),
+          (err) => {
+            console.error("Geo error:", err);
+            reject(new Error('Please enable location access and ensure you have a clear GPS signal to mark attendance'));
+          },
           options
         );
       }
