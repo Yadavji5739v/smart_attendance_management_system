@@ -47,19 +47,17 @@ const Sidebar = () => {
   return (
     <div className="sidebar">
       <div className="sidebar-logo" style={{ marginBottom: '40px', display: 'flex', alignItems: 'center', gap: '14px', padding: '0 8px' }}>
-        <div style={{ 
-          width: '42px', 
-          height: '42px', 
-          borderRadius: '12px', 
-          background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)))', 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'center',
-          boxShadow: '0 8px 16px -4px hsla(var(--primary), 0.5)'
-        }}>
-          <CheckSquare size={24} color="white" />
-        </div>
-        <h2 style={{ fontSize: '20px', fontWeight: '800', color: '#fff', letterSpacing: '-0.02em' }}>SmartEntry</h2>
+        <img 
+          src="/logo.png" 
+          alt="College Logo" 
+          style={{
+            height: '42px',
+            width: 'auto',
+            objectFit: 'contain',
+            borderRadius: '6px'
+          }} 
+        />
+        <h2 style={{ fontSize: '20px', fontWeight: '800', color: 'hsl(var(--text-main))', letterSpacing: '-0.02em' }}>SmartEntry</h2>
       </div>
 
       <nav className="sidebar-nav" style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '4px' }}>
@@ -113,7 +111,7 @@ const Sidebar = () => {
           alignItems: 'center', 
           gap: '12px', 
           padding: '12px',
-          background: 'hsla(0, 0%, 100%, 0.03)',
+          background: 'hsla(var(--text-main), 0.05)',
           borderRadius: 'var(--radius-md)',
           marginBottom: '16px',
           border: '1px solid var(--glass-border)'
@@ -134,15 +132,15 @@ const Sidebar = () => {
             {user.name.charAt(0).toUpperCase()}
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: '14px', fontWeight: '600', color: '#fff', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>{user.name}</div>
+            <div style={{ fontSize: '14px', fontWeight: '600', color: 'hsl(var(--text-main))', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>{user.name}</div>
             <div style={{ fontSize: '11px', color: 'hsl(var(--text-dim))', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>{user.email}</div>
           </div>
         </div>
         <div style={{ display: 'flex', gap: '8px', width: '100%' }}>
-          <button onClick={toggleTheme} className="btn" style={{ flex: 1, background: 'hsla(0, 0%, 100%, 0.05)', color: 'hsl(var(--text-muted))', border: '1px solid var(--glass-border)', padding: '12px 0' }}>
+          <button onClick={toggleTheme} className="btn" style={{ flex: 1, background: 'hsla(var(--text-main), 0.05)', color: 'hsl(var(--text-muted))', border: '1px solid var(--glass-border)', padding: '12px 0' }}>
             {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
           </button>
-          <button onClick={handleLogout} className="btn" style={{ flex: 3, background: 'hsla(0, 0%, 100%, 0.05)', color: 'hsl(var(--text-muted))', border: '1px solid var(--glass-border)' }}>
+          <button onClick={handleLogout} className="btn" style={{ flex: 3, background: 'hsla(var(--text-main), 0.05)', color: 'hsl(var(--text-muted))', border: '1px solid var(--glass-border)' }}>
             <LogOut size={16} /> Logout
           </button>
         </div>

@@ -1,7 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
-import { ThemeContext } from '../context/ThemeContext';
-import { LogIn, UserCircle, Sun, Moon } from 'lucide-react';
+import { Mail, EyeOff, GraduationCap } from 'lucide-react';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -9,7 +8,6 @@ const Login = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { login } = useContext(AuthContext);
-  const { theme, toggleTheme } = useContext(ThemeContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -30,128 +28,155 @@ const Login = () => {
   return (
     <div style={{ 
       display: 'flex', 
+      flexDirection: 'column',
       alignItems: 'center', 
-      justifyContent: 'center', 
       minHeight: '100vh', 
-      padding: '24px',
+      backgroundColor: '#f8f9fa',
       position: 'relative',
-      background: 'hsl(var(--bg-main))'
+      fontFamily: '"Inter", sans-serif',
+      padding: '40px 20px',
+      // Subtle background pattern to mimic the network background
+      backgroundImage: 'radial-gradient(#cbd5e1 1px, transparent 1px)',
+      backgroundSize: '40px 40px'
     }}>
-      <button 
-        onClick={toggleTheme} 
-        style={{ 
-          position: 'absolute', 
-          top: '24px', 
-          right: '24px', 
-          background: 'hsla(var(--bg-accent), 0.6)', 
-          border: '1px solid var(--glass-border)', 
-          color: 'hsl(var(--text-main))', 
-          padding: '10px', 
-          borderRadius: '50%', 
-          cursor: 'pointer',
-          zIndex: 10,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}
-      >
-        {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
-      </button>
-      {/* Dynamic Background Elements */}
-      <div style={{ position: 'absolute', top: '10%', left: '5%', width: '300px', height: '300px', background: 'hsla(var(--primary), 0.15)', filter: 'blur(120px)', borderRadius: '50%', zIndex: 0 }}></div>
-      <div style={{ position: 'absolute', bottom: '10%', right: '5%', width: '400px', height: '400px', background: 'hsla(var(--secondary), 0.1)', filter: 'blur(120px)', borderRadius: '50%', zIndex: 0 }}></div>
+      {/* Top Header */}
+      <h1 style={{ 
+        fontSize: '28px', 
+        fontWeight: '700', 
+        color: '#000', 
+        marginBottom: '20px',
+        textAlign: 'center'
+      }}>
+        Smart Attendance Management System
+      </h1>
+      
+      {/* Logo */}
+      <div style={{
+        marginBottom: '24px',
+        display: 'flex',
+        justifyContent: 'center'
+      }}>
+        <img 
+          src="/logo.png" 
+          alt="College Logo" 
+          style={{
+            height: '90px',
+            objectFit: 'contain',
+            borderRadius: '8px'
+          }} 
+        />
+      </div>
 
-      <div className="glass-panel animate-fade-in" style={{ 
+      {/* Login Card */}
+      <div style={{ 
         width: '100%', 
-        maxWidth: '440px', 
-        padding: '48px', 
-        position: 'relative', 
-        overflow: 'hidden',
+        maxWidth: '380px', 
+        backgroundColor: '#fff', 
+        borderRadius: '8px', 
+        boxShadow: '0 10px 25px rgba(0,0,0,0.08)',
+        padding: '32px 28px',
         zIndex: 1
       }}>
-        
-        <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-          <div style={{ 
-            display: 'inline-flex', 
-            alignItems: 'center', 
-            justifyContent: 'center', 
-            width: '72px', 
-            height: '72px', 
-            borderRadius: '20px', 
-            background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)))', 
-            marginBottom: '24px', 
-            boxShadow: '0 12px 24px -6px hsla(var(--primary), 0.5)',
-            color: 'white'
-          }}>
-            <UserCircle size={40} strokeWidth={1.5} />
-          </div>
-          <h1 style={{ fontSize: '32px', fontWeight: '800', marginBottom: '12px', letterSpacing: '-0.025em' }}>Welcome Back</h1>
-          <p style={{ color: 'hsl(var(--text-muted))', fontSize: '15px', fontWeight: '500' }}>Access your SmartEntry workspace</p>
-        </div>
-
         {error && (
           <div style={{ 
-            background: 'hsla(var(--danger), 0.1)', 
-            borderLeft: '4px solid hsl(var(--danger))', 
-            padding: '16px', 
-            borderRadius: '8px', 
-            marginBottom: '24px', 
-            color: 'hsl(var(--text-main))', 
+            color: '#d32f2f', 
+            backgroundColor: '#ffebee', 
+            padding: '10px', 
+            borderRadius: '4px', 
+            marginBottom: '16px',
             fontSize: '14px',
-            fontWeight: '500',
-            animation: 'fadeIn 0.3s ease'
+            textAlign: 'center'
           }}>
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <div>
-            <label className="input-label" style={{ marginBottom: '8px', fontSize: '12px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'hsl(var(--text-dim))' }} htmlFor="email">UID or Email Address</label>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          
+          {/* Email Field */}
+          <div style={{ position: 'relative' }}>
+            <div style={{
+              position: 'absolute',
+              top: '-8px',
+              left: '12px',
+              background: '#fff',
+              padding: '0 4px',
+              fontSize: '12px',
+              color: '#64748b'
+            }}>Email Address</div>
             <input
-              id="email"
               type="text"
-              className="input-field"
-              placeholder="e.g. 23131001 or name@college.edu"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              placeholder="Email Address"
+              style={{
+                width: '100%',
+                padding: '14px 40px 14px 16px',
+                border: '1px solid #cbd5e1',
+                borderRadius: '4px',
+                fontSize: '15px',
+                outline: 'none',
+                boxSizing: 'border-box',
+                color: '#334155'
+              }}
               required
             />
+            <Mail size={20} color="#94a3b8" style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)' }} />
           </div>
 
-          <div>
-            <label className="input-label" style={{ marginBottom: '8px', fontSize: '12px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'hsl(var(--text-dim))' }} htmlFor="password">Security Password</label>
+          {/* Password Field */}
+          <div style={{ position: 'relative' }}>
+            <div style={{
+              position: 'absolute',
+              top: '-8px',
+              left: '12px',
+              background: '#fff',
+              padding: '0 4px',
+              fontSize: '12px',
+              color: '#64748b'
+            }}>Password</div>
             <input
-              id="password"
               type="password"
-              className="input-field"
-              placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+              style={{
+                width: '100%',
+                padding: '14px 40px 14px 16px',
+                border: '1px solid #cbd5e1',
+                borderRadius: '4px',
+                fontSize: '15px',
+                outline: 'none',
+                boxSizing: 'border-box',
+                color: '#334155'
+              }}
               required
             />
+            <EyeOff size={20} color="#94a3b8" style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer' }} />
           </div>
 
+          {/* Login Button */}
           <button 
             type="submit" 
-            className="btn btn-primary" 
-            style={{ width: '100%', marginTop: '8px', padding: '16px', fontSize: '16px' }}
             disabled={loading}
+            style={{ 
+              width: '100%', 
+              padding: '12px', 
+              backgroundColor: '#1d4ed8', // Matches the blue button
+              color: '#fff', 
+              border: 'none', 
+              borderRadius: '4px', 
+              fontSize: '15px', 
+              fontWeight: '600',
+              cursor: 'pointer',
+              marginTop: '4px',
+              boxShadow: '0 2px 4px rgba(29, 78, 216, 0.3)',
+              transition: 'background-color 0.2s'
+            }}
           >
-            {loading ? 'Authenticating...' : <><LogIn size={20} /> Sign In</>}
+            {loading ? 'LOGGING IN...' : 'LOGIN'}
           </button>
         </form>
-
-        <div style={{ 
-          marginTop: '32px', 
-          textAlign: 'center', 
-          fontSize: '12px', 
-          color: 'hsl(var(--text-dim))',
-          fontWeight: '500',
-          letterSpacing: '0.02em'
-        }}>
-          Secure multi-factor access powered by <span style={{ color: 'hsl(var(--primary))', fontWeight: '700' }}>SmartEntry</span>
-        </div>
       </div>
     </div>
   );
