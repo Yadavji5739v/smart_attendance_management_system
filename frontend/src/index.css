@@ -104,6 +104,24 @@
   --radius-sm: 8px;
 }
 
+[data-theme="light"] {
+  --bg-main: 210, 20%, 96%;
+  --bg-secondary: 0, 0%, 100%;
+  --bg-accent: 210, 20%, 92%;
+  
+  --primary: 250, 89%, 55%;
+  --primary-glow: 250, 89%, 55%, 0.2;
+  --secondary: 190, 100%, 35%;
+  
+  --text-main: 222, 47%, 15%;
+  --text-muted: 215, 15%, 45%;
+  --text-dim: 215, 25%, 65%;
+  
+  --glass-bg: hsla(0, 0%, 100%, 0.7);
+  --glass-border: hsla(215, 25%, 20%, 0.1);
+  --glass-shadow: 0 12px 40px -8px hsla(0, 0%, 0%, 0.1);
+}
+
 * {
   margin: 0;
   padding: 0;

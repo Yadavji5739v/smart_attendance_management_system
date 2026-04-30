@@ -1,10 +1,12 @@
 import React, { useContext } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import { LayoutDashboard, Users, MapPin, BookOpen, LogOut, CheckSquare, ScanLine, FileBarChart, QrCode } from 'lucide-react';
+import { ThemeContext } from '../context/ThemeContext';
+import { LayoutDashboard, Users, MapPin, BookOpen, LogOut, CheckSquare, ScanLine, FileBarChart, QrCode, Sun, Moon } from 'lucide-react';
 
 const Sidebar = () => {
   const { user, logout } = useContext(AuthContext);
+  const { theme, toggleTheme } = useContext(ThemeContext);
   const navigate = useNavigate();
 
   if (!user) return null;
@@ -136,9 +138,14 @@ const Sidebar = () => {
             <div style={{ fontSize: '11px', color: 'hsl(var(--text-dim))', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>{user.email}</div>
           </div>
         </div>
-        <button onClick={handleLogout} className="btn" style={{ width: '100%', background: 'hsla(0, 0%, 100%, 0.05)', color: 'hsl(var(--text-muted))', border: '1px solid var(--glass-border)' }}>
-          <LogOut size={16} /> Logout
-        </button>
+        <div style={{ display: 'flex', gap: '8px', width: '100%' }}>
+          <button onClick={toggleTheme} className="btn" style={{ flex: 1, background: 'hsla(0, 0%, 100%, 0.05)', color: 'hsl(var(--text-muted))', border: '1px solid var(--glass-border)', padding: '12px 0' }}>
+            {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
+          </button>
+          <button onClick={handleLogout} className="btn" style={{ flex: 3, background: 'hsla(0, 0%, 100%, 0.05)', color: 'hsl(var(--text-muted))', border: '1px solid var(--glass-border)' }}>
+            <LogOut size={16} /> Logout
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
-import { LogIn, UserCircle } from 'lucide-react';
+import { ThemeContext } from '../context/ThemeContext';
+import { LogIn, UserCircle, Sun, Moon } from 'lucide-react';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -8,6 +9,7 @@ const Login = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { login } = useContext(AuthContext);
+  const { theme, toggleTheme } = useContext(ThemeContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,6 +37,26 @@ const Login = () => {
       position: 'relative',
       background: 'hsl(var(--bg-main))'
     }}>
+      <button 
+        onClick={toggleTheme} 
+        style={{ 
+          position: 'absolute', 
+          top: '24px', 
+          right: '24px', 
+          background: 'hsla(var(--bg-accent), 0.6)', 
+          border: '1px solid var(--glass-border)', 
+          color: 'hsl(var(--text-main))', 
+          padding: '10px', 
+          borderRadius: '50%', 
+          cursor: 'pointer',
+          zIndex: 10,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
+        {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
+      </button>
       {/* Dynamic Background Elements */}
       <div style={{ position: 'absolute', top: '10%', left: '5%', width: '300px', height: '300px', background: 'hsla(var(--primary), 0.15)', filter: 'blur(120px)', borderRadius: '50%', zIndex: 0 }}></div>
       <div style={{ position: 'absolute', bottom: '10%', right: '5%', width: '400px', height: '400px', background: 'hsla(var(--secondary), 0.1)', filter: 'blur(120px)', borderRadius: '50%', zIndex: 0 }}></div>
